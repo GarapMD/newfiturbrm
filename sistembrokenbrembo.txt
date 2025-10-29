@@ -514,4 +514,153 @@ UserInput.InputBegan:Connect(function(inp,gp)
     end
 end)
 
+
 Notify("System Broken","Launcher siap — klik '⚡ System Broken' untuk membuka GUI.",4)
+
+--========================================================
+-- ⚡ SYSTEM BROKEN — TAB ANIMATIONS (R15 Animation Packs)
+--========================================================
+
+local Players = game:GetService("Players")
+local plr = Players.LocalPlayer
+local char = plr.Character or plr.CharacterAdded:Wait()
+
+local function getHumanoid()
+	return char:FindFirstChildOfClass("Humanoid")
+end
+
+local function Notify(t, m, d)
+	pcall(function()
+		game:GetService("StarterGui"):SetCore("SendNotification", {
+			Title = t, Text = m, Duration = d or 3
+		})
+	end)
+end
+
+local function replaceAnim(animType, id)
+	local animate = char:FindFirstChild("Animate")
+	if animate and animate:FindFirstChild(animType) then
+		for _,anim in ipairs(animate[animType]:GetChildren()) do
+			if anim:IsA("Animation") then
+				anim.AnimationId = "rbxassetid://"..id
+			end
+		end
+	end
+end
+
+local function applyPack(pack)
+	local animate = char:FindFirstChild("Animate")
+	if not animate then return end
+
+	local packs = {
+		["Vampire"] = { idle=1083445855, walk=1083473930, run=1083474132, jump=1083455352, fall=1083443587, climb=1083439238 },
+		["Hero"] = { idle=616140816, walk=616146177, run=616163682, jump=616156119, fall=616157476, climb=616156119 },
+		["Zombie Classic"] = { idle=616158929, walk=616168032, run=616163682, jump=616161997, fall=616157476, climb=616163682 },
+		["Mage"] = { idle=1083431233, walk=1083473930, run=1083474132, jump=1083455352, fall=1083443587, climb=1083439238 },
+		["Levitation"] = { idle=616006778, walk=616008087, run=616010382, jump=616008936, fall=616005863, climb=616003713 },
+		["Stylish"] = { idle=616136790, walk=616138447, run=616139903, jump=616139451, fall=616134815, climb=616134815 },
+		["Toy"] = { idle=782841498, walk=782843345, run=782842708, jump=782847020, fall=782846423, climb=782843869 },
+		["Elder"] = { idle=845397899, walk=845400520, run=845386501, jump=845398858, fall=845396048, climb=845392038 },
+		["Superhero"] = { idle=616111295, walk=616122287, run=616117076, jump=616115533, fall=616120861, climb=616104706 },
+		["Knight"] = { idle=657595757, walk=657552124, run=657564596, jump=658409194, fall=657600338, climb=658360781 },
+		["Ghost"] = { idle=616006778, walk=616008087, run=616010382, jump=616008936, fall=616005863, climb=616003713 },
+		["Patrol"] = { idle=616095330, walk=616095330, run=616095330, jump=616095330, fall=616095330, climb=616095330 }
+	}
+
+	local selected = packs[pack]
+	if not selected then return Notify("Animations", "Pack "..pack.." tidak ditemukan.",3) end
+	for t,id in pairs(selected) do replaceAnim(t,id) end
+	Notify("Animations", pack.." Pack diterapkan.",3)
+end
+
+local function resetPack()
+	local animate = char:FindFirstChild("Animate")
+	if not animate then return end
+	local defaultIDs = {
+		idle=507766666, walk=507777826, run=507767714, jump=507765000, fall=507767968, climb=507765644
+	}
+	for t,id in pairs(defaultIDs) do replaceAnim(t,id) end
+	Notify("Animations", "Reset ke default berhasil.",3)
+end
+
+local gui = game:GetService("CoreGui"):FindFirstChild("BremboSysBroken_TargetOnly")
+if not gui then return end
+local main = gui:FindFirstChild("Window")
+
+-- Tab Button
+local Tabs = main:FindFirstChildOfClass("Frame")
+local AnimTab = Instance.new("TextButton", Tabs)
+AnimTab.Name = "TabAnimPacks"
+AnimTab.Size = UDim2.new(0,78,0,28)
+AnimTab.Position = UDim2.new(0,264,0,4)
+AnimTab.BackgroundColor3 = Color3.fromRGB(20,40,55)
+AnimTab.Text = "Anim Pack"
+AnimTab.TextColor3 = Color3.fromRGB(200,240,255)
+AnimTab.Font = Enum.Font.SourceSansBold
+AnimTab.TextSize = 16
+local c = Instance.new("UICorner", AnimTab); c.CornerRadius = UDim.new(0,6)
+local s = Instance.new("UIStroke", AnimTab); s.Thickness = 1.4; s.Color = Color3.fromRGB(0,200,255)
+
+-- Page Frame
+local AnimPage = Instance.new("Frame", main)
+AnimPage.Name = "PageAnimPack"
+AnimPage.Size = UDim2.new(1,-24,1,-56)
+AnimPage.Position = UDim2.new(0,12,0,44)
+AnimPage.BackgroundTransparency = 1
+AnimPage.Visible = false
+
+local function showPage(p)
+	for _,v in ipairs(main:GetChildren()) do
+		if v:IsA("Frame") and v.Name:find("Page") then v.Visible=false end
+	end
+	p.Visible=true
+end
+AnimTab.MouseButton1Click:Connect(function() showPage(AnimPage) end)
+
+-- Button builder
+local function neonButton(parent,text,x,y)
+	local b=Instance.new("TextButton",parent)
+	b.Size=UDim2.new(0.48,0,0,32)
+	b.Position=UDim2.new(x,0,y,0)
+	b.BackgroundColor3=Color3.fromRGB(18,30,44)
+	b.BackgroundTransparency=0.08
+	b.Text=text
+	b.TextColor3=Color3.fromRGB(220,245,255)
+	b.Font=Enum.Font.SourceSansBold
+	b.TextSize=16
+	local c=Instance.new("UICorner",b);c.CornerRadius=UDim.new(0,8)
+	local s=Instance.new("UIStroke",b);s.Thickness=1.3;s.Color=Color3.fromRGB(0,210,255)
+	return b
+end
+
+-- Buttons
+local b1=neonButton(AnimPage,"Vampire",0,0.02)
+local b2=neonButton(AnimPage,"Hero",0.52,0.02)
+local b3=neonButton(AnimPage,"Zombie",0,0.14)
+local b4=neonButton(AnimPage,"Mage",0.52,0.14)
+local b5=neonButton(AnimPage,"Levitation",0,0.26)
+local b6=neonButton(AnimPage,"Stylish",0.52,0.26)
+local b7=neonButton(AnimPage,"Toy",0,0.38)
+local b8=neonButton(AnimPage,"Elder",0.52,0.38)
+local b9=neonButton(AnimPage,"Superhero",0,0.50)
+local b10=neonButton(AnimPage,"Knight",0.52,0.50)
+local b11=neonButton(AnimPage,"Ghost",0,0.62)
+local b12=neonButton(AnimPage,"Patrol",0.52,0.62)
+local b13=neonButton(AnimPage,"Reset Default",0,0.78)
+
+-- Event
+b1.MouseButton1Click:Connect(function() applyPack("Vampire") end)
+b2.MouseButton1Click:Connect(function() applyPack("Hero") end)
+b3.MouseButton1Click:Connect(function() applyPack("Zombie Classic") end)
+b4.MouseButton1Click:Connect(function() applyPack("Mage") end)
+b5.MouseButton1Click:Connect(function() applyPack("Levitation") end)
+b6.MouseButton1Click:Connect(function() applyPack("Stylish") end)
+b7.MouseButton1Click:Connect(function() applyPack("Toy") end)
+b8.MouseButton1Click:Connect(function() applyPack("Elder") end)
+b9.MouseButton1Click:Connect(function() applyPack("Superhero") end)
+b10.MouseButton1Click:Connect(function() applyPack("Knight") end)
+b11.MouseButton1Click:Connect(function() applyPack("Ghost") end)
+b12.MouseButton1Click:Connect(function() applyPack("Patrol") end)
+b13.MouseButton1Click:Connect(resetPack)
+
+Notify("System Broken","Tab Animations Pack loaded.",4)
